@@ -90,7 +90,6 @@ python-jwt==2.0.1
 pytweening==1.2.0
 pytz==2024.1
 pywhatkit==5.4
-pywin32==306
 pyzmq==26.0.3
 requests==2.32.3
 requests-toolbelt==0.10.1
