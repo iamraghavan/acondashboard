@@ -42,18 +42,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'webdashboard',
-    'pwa',
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'webdashboard.middleware.JWTAuthMiddleware'
+    'webdashboard.middleware.JWTAuthMiddleware',
+
 ]
 
 ROOT_URLCONF = 'acondashboard.urls'
@@ -138,6 +140,11 @@ STATICFILES_DIRS = [
 ]
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js'),
+
+if not DEBUG:
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Where collectstatic will copy files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

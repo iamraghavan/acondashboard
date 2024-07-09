@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('andavarcon/a/portal/', include('webdashboard.urls')),
-    path('andavarcon/a/portal/', include('pwa.urls'))
+    # path('andavarcon/a/portal/', include('pwa.urls'))
 ]
