@@ -81,8 +81,8 @@ WSGI_APPLICATION = 'acondashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'u427691722_jbl',      # Database name
-        'USER': 'u427691722_adminjbl', # MySQL user
+        'NAME': '',      # Database name
+        'USER': '', # MySQL user
         'PASSWORD': '',    # MySQL password
         'HOST': '',     # Host where MySQL server is running
         'PORT': '3306',                # MySQL port (usually 3306)
@@ -128,8 +128,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'webdashboard/static'),
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-WHITENOISE_KEEP_ONLY_HASHED_FILES = False
+# Use default storage to skip missing files errors
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/serviceworker.js')
 
