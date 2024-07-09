@@ -1,0 +1,115 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+  <div
+    class="position-relative overflow-hidden radial-gradient min-vh-100 w-100"
+  >
+    <div class="position-relative z-index-5">
+      <div class="row gx-0">
+        <div class="col-lg-6 col-xl-5 col-xxl-4">
+          <div
+            class="min-vh-100 bg-body row justify-content-center align-items-center p-5"
+          >
+            <div class="col-12 auth-card">
+              <a href="/" class="text-nowrap logo-img d-block w-100">
+                <img
+                  src="{% static 'images/logos/logo.svg' %}"
+                  class="dark-logo"
+                  alt="Logo-Dark"
+                  style="width: auto; height: 3rem"
+                />
+              </a>
+              <h2 class="mb-2 mt-4 fs-7 fw-bolder">Sign In</h2>
+              <p class="mb-9">
+                Andavar Collge of Nursing - Website - Admin Dashboard
+              </p>
+
+              <div class="position-relative text-center my-4">
+                <p
+                  class="mb-0 fs-4 px-3 d-inline-block bg-body text-dark z-index-5 position-relative"
+                >
+                  or sign in with
+                </p>
+                <span
+                  class="border-top w-100 position-absolute top-50 start-50 translate-middle"
+                ></span>
+              </div>
+
+              <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    required
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 py-2 mb-4 rounded-2"
+                >
+                  Sign In
+                </button>
+
+                <div class="d-flex align-items-center justify-content-center">
+                  {% if error %}
+                  <p class="fs-4 mb-0 fw-medium">{{ error }}</p>
+                  {% endif %}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="col-lg-6 col-xl-7 col-xxl-8 position-relative overflow-hidden bg-dark d-none d-lg-block"
+        >
+          <div class="circle-top"></div>
+          <div>
+            <img
+              src="{% static 'images/logos/logo-white.svg' %}"
+              class="circle-bottom"
+              alt="Logo-Dark"
+            />
+          </div>
+          <div
+            class="d-lg-flex align-items-center z-index-5 position-relative h-n80"
+          >
+            <div class="row justify-content-center w-100">
+              <div class="col-lg-6">
+                <h2 class="text-white fs-10 mb-3 lh-sm">
+                  Welcome to
+                  <br />
+                  Bumble Bees IT Solutions
+                </h2>
+                <span class="opacity-75 fs-4 text-white d-block mb-3">
+                  Bumble Bees IT Solutions provides innovative solutions
+                  tailored to your business needs. We specialize in creating
+                  efficient and user-friendly web applications.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

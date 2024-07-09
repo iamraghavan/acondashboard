@@ -1,0 +1,93 @@
+
+<aside class="side-mini-panel with-vertical">
+
+    <div class="iconbar">
+      <div>
+        <div class="mini-nav">
+          <div class="brand-logo d-flex align-items-center justify-content-center">
+            <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
+              <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-7"></iconify-icon>
+            </a>
+          </div>
+          <ul class="mini-nav-ul" data-simplebar="">
+  
+            <!-- --------------------------------------------------------------------------------------------------------- -->
+            <!-- Dashboards -->
+            <!-- --------------------------------------------------------------------------------------------------------- -->
+            <li class="mini-nav-item" id="mini-1">
+              <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                data-bs-placement="right" data-bs-title="Dashboards">
+                <iconify-icon icon="solar:layers-line-duotone" class="fs-7"></iconify-icon>
+              </a>
+            </li>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+        </div>
+        <div class="sidebarmenu">
+          <div class="brand-logo d-flex align-items-center nav-logo">
+            <a href="/" class="text-nowrap logo-img">
+              <img src="https://raw.githubusercontent.com/iamraghavan/iamraghavan/cd6bda04b628fce0550cf31c10b3575f4f6a71e5/logo.svg" style="width: auto; height: 3rem" alt="Logo">
+            </a>
+  
+          </div>
+          <!-- ---------------------------------- -->
+          <!-- Dashboard -->
+          <!-- ---------------------------------- -->
+          <nav class="sidebar-nav" id="menu-right-mini-1" data-simplebar="">
+            <ul class="sidebar-menu" id="sidebarnav">
+              <!-- ---------------------------------- -->
+              <!-- Home -->
+              <!-- ---------------------------------- -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Dashboards</span>
+              </li>
+              <!-- ---------------------------------- -->
+              <!-- Dashboard -->
+              <!-- ---------------------------------- -->
+              
+              <li class="sidebar-item {% if request.path == '/' %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'dashboard_page' unique_id=request.session.unique_id %}">
+                    <iconify-icon icon="solar:atom-line-duotone"></iconify-icon>Dashboard
+                </a>
+            </li>
+            
+            <li>
+                <span class="sidebar-divider"></span>
+            </li>
+            
+            <li class="sidebar-item {% if request.path == '/events/' %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'events_page' unique_id=request.session.unique_id %}">
+                    <iconify-icon icon="solar:calendar-minimalistic-outline"></iconify-icon>Events
+                </a>
+            </li>
+            
+            <li class="sidebar-item {% if request.path == '/circulars/' %}active{% endif %}">
+              <a class="sidebar-link" href="{% url 'circulars_page' unique_id=request.session.unique_id %}">
+                  <iconify-icon icon="solar:chat-round-line-broken"></iconify-icon>Circulars
+              </a>
+          </li>
+          
+            
+            <li class="sidebar-item {% if request.path == '/gallery/' %}active{% endif %}">
+                <a class="sidebar-link" href="#">
+                    <iconify-icon icon="solar:gallery-edit-outline"></iconify-icon>Gallery
+                </a>
+            </li>
+            
+  
+            </ul>
+          </nav>
+  
+  
+        </div>
+      </div>
+    </div>
+  </aside>

@@ -1,0 +1,188 @@
+{% load pwa %}
+{% load static %}
+<!DOCTYPE html>
+<html
+  lang="en"
+  dir="ltr"
+  data-bs-theme="light"
+  data-color-theme="Blue_Theme"
+  data-layout="vertical"
+>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'pwa/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'pwa/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'pwa/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'pwa/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'pwa/safari-pinned-tab.svg' %}" color="#000000">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#eda73e">
+    <!-- Favicon icon-->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'images/logos/favicon.png' %}"
+    />
+
+    
+
+    <!-- Core Css -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+
+  <body>
+    <div id="main-wrapper">
+        {% block content %} 
+        {% endblock %}
+    </div>
+    <div class="dark-transparent sidebartoggler"></div>
+    <!-- Import Js Files -->
+    <script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'libs/simplebar/dist/simplebar.min.js' %}"></script>
+    <script src="{% static 'js/theme/app.init.js' %}"></script>
+    <script src="{% static 'js/theme/theme.js' %}"></script>
+    <script src="{% static 'js/theme/app.min.js' %}"></script>
+    <script src="{% static 'js/theme/sidebarmenu.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script> -->
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="{% static 'js/dashboards/dashboard1.js' %}"></script>
+    <script src="{% static 'libs/fullcalendar/index.global.min.js' %}"></script>
+
+    <script>
+      function getCurrentDateTime() {
+          var currentDate = new Date();
+  
+          var hours = currentDate.getHours();
+          var minutes = currentDate.getMinutes();
+          var seconds = currentDate.getSeconds();
+          var ampm = hours >= 12 ? 'PM' : 'AM';
+  
+          hours = hours % 12;
+          hours = hours ? hours : 12; // the hour '0' should be '12'
+          minutes = minutes < 10 ? '0' + minutes : minutes;
+          seconds = seconds < 10 ? '0' + seconds : seconds;
+  
+          var day = currentDate.getDate();
+          var month = currentDate.toLocaleString('default', { month: 'long' });
+          var year = currentDate.getFullYear();
+  
+          var formattedDateTime = `${hours}:${minutes}:${seconds} ${ampm} - ${day} ${month} - ${year}`;
+  
+          return formattedDateTime;
+      }
+  
+      // Update the 'datetime' element with the current date and time
+      function updateDateTime() {
+          document.getElementById("datetime").textContent = getCurrentDateTime();
+      }
+  
+      // Call the updateDateTime function every second
+      setInterval(updateDateTime, 1000);
+  </script>
+
+
+  
+  <script>
+    $(document).ready(function () {
+        var table = $('#event-table').DataTable({
+            "pagingType": "simple_numbers",
+            "pageLength": 2, // Show 2 rows per page
+            "lengthMenu": [2, 5, 10, 25, 50, 75, 100],
+            "order": [],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                "infoEmpty": "No entries found",
+                "zeroRecords": "No matching records found",
+                "infoFiltered": "(filtered from _MAX_ total entries)",
+                "paginate": {
+                    "previous": "&lt;",
+                    "next": "&gt;"
+                },
+                "search": "Search:"
+            },
+            "searching": true, // Enable custom search
+            "responsive": true // Enable responsiveness
+        });
+
+        // Custom search handling
+        $('#input-search').on('keyup', function () {
+            table.search(this.value).draw(); // Apply search and redraw the table
+        });
+
+        // Adjust layout for search input and pagination
+        $('#event-table_wrapper .row').first().addClass('align-items-start'); // Align items vertically
+        $('#event-table_filter').addClass('order-md-1'); // Move search input to the left
+        $('#event-table_paginate').addClass('mt-3 mt-md-2 px-3 py-3 order-md-2'); // Add spacing and adjust pagination
+    });
+</script>
+
+<script>
+  $(document).ready(function () {
+      var table = $('#circular-table').DataTable({
+          "pagingType": "simple_numbers",
+          "pageLength": 5, // Show 5 rows per page (adjust as needed)
+          "lengthMenu": [5, 10, 25, 50, 75, 100],
+          "order": [],
+          "language": {
+              "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+              "infoEmpty": "No entries found",
+              "zeroRecords": "No matching records found",
+              "infoFiltered": "(filtered from _MAX_ total entries)",
+              "paginate": {
+                  "previous": "&lt;",
+                  "next": "&gt;"
+              },
+              "search": "Search:"
+          },
+          "searching": true, // Enable custom search
+          "responsive": true // Enable responsiveness
+      });
+
+      // Custom search handling
+      $('#input-search').on('keyup', function () {
+          table.search(this.value).draw(); // Apply search and redraw the table
+      });
+
+      // Adjust layout for search input and pagination
+      $('#circular-table_wrapper .row').first().addClass('align-items-start'); // Align items vertically
+      $('#circular-table_filter').addClass('order-md-1'); // Move search input to the left
+      $('#circular-table_paginate').addClass('mt-3 mt-md-2 px-3 py-3 order-md-2'); // Add spacing and adjust pagination
+  });
+</script>
+
+<style>
+  #event-table_filter{
+    display: none !important;
+  }
+
+  #circular-table_filter{
+    display: none !important;
+  }
+</style>
+
+  <script>
+    document.querySelector('a[href="{% url "sign_out" %}"]').addEventListener('click', function() {
+        // Clear local storage
+        localStorage.clear();
+        // Optionally clear session storage
+        sessionStorage.clear();
+    });
+</script>
+  </body>
+</html>

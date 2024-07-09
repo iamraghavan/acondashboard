@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-wrapper">
+    {% include 'components/header_component.html' %}
+    {% include 'components/sidebar_component.html' %}
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                {% include 'components/breadcrumbs_component.html' %}
+                <div class="widget-content searchable-container list">
+                    <div class="card card-body">
+                        <div class="row">
+                            <div class="col-md-4 col-xl-3">
+                                <form class="position-relative">
+                                    <input type="text" class="form-control circular-search ps-5" id="input-search"
+                                        placeholder="Search Circulars...">
+                                    <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+                                </form>
+                            </div>
+                            <div class="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
+                                <a href="javascript:void(0)" id="btn-add-circular"
+                                    class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal"
+                                    data-bs-target="#addEditCircularModal">
+                                    <i class="ti ti-plus text-white me-1 fs-5"></i> Add Circular
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="editCircularModal" tabindex="-1" aria-labelledby="editCircularModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editCircularModalLabel">Edit Circular</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editCircularForm">
+                                        <input type="hidden" id="circular-id" name="circular_id">
+                                        <div class="mb-3">
+                                            <label for="circular-title" class="form-label">Circular Title</label>
+                                            <input type="text" class="form-control" id="circular-title" name="title" placeholder="Enter Circular Title">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="circular-description" class="form-label">Circular Overview Description</label>
+                                            <textarea class="form-control" id="circular-description" name="description" rows="3" placeholder="Enter Circular Overview Description"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="circular-date" class="form-label">Circular Date</label>
+                                            <input type="date" class="form-control" id="circular-date" name="date">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="circular-location" class="form-label">Circular Location</label>
+                                            <input type="text" class="form-control" id="circular-location" name="location" value="Andavar College of Nursing, Nagapattinam">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="circular-authorized-person" class="form-label">Authorized Person</label>
+                                            <input type="text" class="form-control" id="circular-authorized-person" name="authorized_person" placeholder="Enter Authorized Person">
+                                        </div>
+                                       
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="save-changes-btn2">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="addEditCircularModal" tabindex="-1" role="dialog"
+                    aria-labelledby="addEditCircularModalTitle" aria-hidden="true">
+                   <div class="modal-dialog modal-dialog-centered" role="document">
+                       <div class="modal-content">
+                           <div class="modal-header d-flex align-items-center">
+                               <h5 class="modal-title">Add/Edit Circular</h5>
+                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                           </div>
+                           <div class="modal-body">
+                               <div class="add-circular-box">
+                                   <div class="add-circular-content">
+                                       <form id="addEditCircularForm" enctype="multipart/form-data">
+                                           <div class="mb-3">
+                                               <label for="circular-title" class="form-label">Circular Title</label>
+                                               <input type="text" class="form-control" id="circular-title" name="title" placeholder="Enter Circular Title">
+                                           </div>
+                                           <div class="mb-3">
+                                               <label for="circular-description" class="form-label">Circular Overview Description (Up to 250 characters)</label>
+                                               <textarea class="form-control" id="circular-description" name="description" rows="3"
+                                                         placeholder="Enter Circular Overview Description"></textarea>
+                                           </div>
+                                           <div class="mb-3">
+                                               <label for="circular-pdf" class="form-label">Circular PDF (Max 1 to 2 MB)</label>
+                                               <input type="file" class="form-control" accept=".pdf" id="circular-pdf" name="circular_pdf">
+                                           </div>
+                                           <div class="mb-3">
+                                               <label for="circular-date" class="form-label">Circular Date</label>
+                                               <input type="date" class="form-control" id="circular-date" name="date">
+                                           </div>
+                                           <div class="mb-3">
+                                               <label for="circular-location" class="form-label">Circular Location</label>
+                                               <input type="text" class="form-control" id="circular-location" name="location"
+                                                      value="Andavar College of Nursing, Nagapattinam">
+                                           </div>
+                                           <div class="mb-3">
+                                               <label for="circular-authorized-person" class="form-label">Authorized Person</label>
+                                               <input type="text" class="form-control" id="circular-authorized-person" name="authorized_person"
+                                                      placeholder="Enter Authorized Person">
+                                           </div>
+                                           <input type="hidden" id="circular-id" name="circular_id">
+                                       </form>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="modal-footer">
+                               <div class="d-flex gap-6 m-0">
+                                   <button id="btn-save-circular" class="btn btn-success" onclick="saveCircular()">Create Circular</button>
+                                   <button class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               
+
+               <div class="card">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <h4 class="card-title mb-0">Circulars Table</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="circular-table" class="table w-100 table-striped table-bordered display nowrap">
+                            <thead class="header-item">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                    <th>Authorized Person</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="circular-list">
+                                {% if circulars %}
+                                    {% for circular_id, circular in circulars.items %}
+                                        <tr id="circular-row-{{ circular_id }}">
+                                            <td class="wrap-text">{{ circular.title }}</td>
+                                            <td>{{ circular.date }}</td>
+                                            <td>{{ circular.location }}</td>
+                                            <td>{{ circular.authorized_person }}</td>
+                                            <td>
+                                                <a href="#" class="btn rounded-pill btn-outline-info btn-sm"
+                                                   onclick="openEditModal('{{ circular_id }}')">
+                                                    <i class="ti ti-edit"></i> Edit
+                                                </a>
+                                                <a href="#" class="btn rounded-pill btn-outline-danger btn-sm"
+                                                   onclick="deleteCircular('{{ circular_id }}')">
+                                                    <i class="ti ti-trash"></i> Delete
+                                                </a>
+                                                <a href="{% url 'view_circular' circular_id=circular_id %}" target="_blank" rel="noopener"
+                                                   class="btn rounded-pill btn-outline-success btn-sm">
+                                                    <i class="ti ti-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5">No circulars available.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    let csrfToken = '{{ csrf_token }}';
+
+    function deleteCircular(id) {
+        const url = '{% url "delete_circular" id=0 %}'.replace('0', id);
+        axios.delete(url, { headers: { 'X-CSRFToken': csrfToken } })
+           .then(response => {
+                if (response.data.success) {
+                    document.getElementById('circular-row-' + id).remove();
+                    alert('Circular deleted successfully.');
+                } else {
+                    alert('Failed to delete circular.');
+                }
+            })
+           .catch(error => {
+                alert('An error occurred while deleting the circular.');
+            });
+    }
+
+    function openEditModal(id) {
+        const url = '{% url "get_circular" id=0 %}'.replace('0', id);
+        axios.get(url, { headers: { 'X-CSRFToken': csrfToken } })
+           .then(response => {
+                const circular = response.data.circular;
+                document.getElementById('circular-id').value = circular.circular_id;
+                document.getElementById('circular-title').value = circular.title;
+                document.getElementById('circular-description').value = circular.description;
+                document.getElementById('circular-date').value = circular.date;
+                document.getElementById('circular-location').value = circular.location;
+                document.getElementById('circular-authorized-person').value = circular.authorized_person;
+                $('#editCircularModal').modal('show');
+
+                let circularID = circular.circular_id;
+                document.getElementById('save-changes-btn2').onclick = function() {
+                    updateCircular(circularID);
+                };
+            })
+           .catch(error => {
+                alert('An error occurred while fetching circular details.');
+            });
+    }
+
+    function updateCircular(circularId) {
+        const url = '{% url "edit_circular" id=0 %}'.replace('0', circularId);
+        const formData = new FormData(document.getElementById('editCircularForm'));
+        
+        console.log('Update circular request data:', formData);
+        
+        axios.post(url, formData, {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+           .then(response => {
+                if (response.data.success) {
+                    alert('Circular updated successfully!');
+                    $('#editCircularModal').modal('hide');
+                } else {
+                    alert(`Error updating circular: ${response.data.error}`);
+                }
+            })
+           .catch(error => {
+                console.error('Error updating circular:', error);
+                alert('An error occurred while updating circular.');
+            });
+    }
+
+
+
+    function saveCircular() {
+    const formData = new FormData(document.getElementById('addEditCircularForm'));
+    const csrfToken = '{{ csrf_token }}';  
+
+    axios.post('{% url "add_circular" %}', formData, {
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+        if (response.data.success) {
+            location.reload();
+        } else {
+            alert('Failed to add circular: ' + response.data.error);
+        }
+    })
+    .catch(error => {
+        alert('An error occurred while adding the circular: ' + error.message);
+    });
+}
+
+
+    document.getElementById('circular-search').addEventListener('input', function() {
+        var searchQuery = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#circular-table tbody tr');
+        rows.forEach(function(row) {
+            var title = row.querySelector('td.wrap-text').innerText.toLowerCase();
+            if (title.includes(searchQuery)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+<style>
+    .wrap-text {
+        max-width: 200px; /* Adjust as per your design */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+{% endblock %}
