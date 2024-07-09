@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure-3x_tk9%b)wo6i&+_+msf-7%1&zzgp#ufptn7**k$@fc)4stm*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.1.5','acondashboard.onrender.com']
+ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com']
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True
@@ -42,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'webdashboard',
-
 ]
 
 MIDDLEWARE = [
@@ -55,12 +53,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'webdashboard.middleware.JWTAuthMiddleware',
-
 ]
 
 ROOT_URLCONF = 'acondashboard.urls'
-
-SECRET_KEY = '49tooAZhC7vGqHM2PJ5VKYy4vi5TNXqU'
 
 TEMPLATES = [
     {
@@ -80,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'acondashboard.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -89,14 +83,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'u427691722_jbl',      # Database name
         'USER': 'u427691722_adminjbl', # MySQL user
-        'PASSWORD': 'p!T4X5#9RjE2',    # MySQL password
-        'HOST': '195.179.239.102',     # Host where MySQL server is running
-        'PORT': '3306',                    # MySQL port (usually 3306)
-        
+        'PASSWORD': '',    # MySQL password
+        'HOST': '',     # Host where MySQL server is running
+        'PORT': '3306',                # MySQL port (usually 3306)
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -116,7 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -128,35 +118,20 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Additional locations of static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'webdashboard/static'),
 ]
-
-PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js'),
-
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
-
-
-# Where collectstatic will copy files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/serviceworker.js')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
