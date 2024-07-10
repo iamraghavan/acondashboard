@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-3x_tk9%b)wo6i&+_+msf-7%1&zzgp#ufptn7**k$@fc)4stm*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com', '127.0.0.1']
+=======
+ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com']
+>>>>>>> 2552c1a6fa103a9164b11c5b3ff50b8440cd73aa
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True
@@ -83,11 +87,19 @@ WSGI_APPLICATION = 'acondashboard.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.mysql',
+<<<<<<< HEAD
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT', default='3306'),
+=======
+        'NAME': '',      # Database name
+        'USER': '', # MySQL user
+        'PASSWORD': '',    # MySQL password
+        'HOST': '',     # Host where MySQL server is running
+        'PORT': '3306',                # MySQL port (usually 3306)
+>>>>>>> 2552c1a6fa103a9164b11c5b3ff50b8440cd73aa
     }
 }
 
