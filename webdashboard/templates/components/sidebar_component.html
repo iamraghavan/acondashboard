@@ -76,12 +76,12 @@
           </li>
           
             
-            <li class="sidebar-item {% if request.path == '/gallery/' %}active{% endif %}">
-                <a class="sidebar-link" href="#">
-                    <iconify-icon icon="solar:gallery-edit-outline"></iconify-icon>Gallery
-                </a>
-            </li>
-            
+          <li class="sidebar-item {% if request.path == '/gallerys/{{ request.session.unique_id }}/' %}active{% endif %}">
+            <a class="sidebar-link" href="{% url 'gallerys_page' unique_id=request.session.unique_id %}">
+                <iconify-icon icon="solar:gallery-edit-outline"></iconify-icon>Gallery
+            </a>
+        </li>
+        
   
             </ul>
           </nav>

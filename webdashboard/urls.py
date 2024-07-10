@@ -20,6 +20,14 @@ urlpatterns = [
     path('add_circular/', views.create_circular, name='add_circular'),
     path('view_circular/<str:circular_id>/', views.view_circular, name='view_circular'),
 
+
+    path('gallerys/<str:unique_id>/', views.gallery, name="gallerys_page"),
+    path('gallerys/create/<str:unique_id>/', views.create_folder, name='create_folder'),
+    path('folders/', views.list_folders, name='list_folders'),
+    # path('upload_image/<str:folder_id>/', views.upload_image_view, name='upload_image_view'),
+
+
+
     path('signout/', views.sign_out, name='sign_out'),
     path('debug/', views.debug_view, name='debug_view'),
 ]

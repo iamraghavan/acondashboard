@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+from decouple import Config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-3x_tk9%b)wo6i&+_+msf-7%1&zzgp#ufptn7**k$@fc)4stm*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com']
+ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com', '127.0.0.1']
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True
@@ -79,13 +81,13 @@ WSGI_APPLICATION = 'acondashboard.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',      # Database name
-        'USER': '', # MySQL user
-        'PASSWORD': '',    # MySQL password
-        'HOST': '',     # Host where MySQL server is running
-        'PORT': '3306',                # MySQL port (usually 3306)
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 
@@ -126,6 +128,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'webdashboard/static'),
+    os.path.join(BASE_DIR, 'acondashboard/static'),
+
 ]
 
 # Use default storage to skip missing files errors
@@ -137,3 +141,22 @@ PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/serviceworker.js')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Path to your Firebase admin SDK JSON file
+FIREBASE_ADMIN_SDK_PATH = os.path.join(BASE_DIR, 'static', 'andavarcon-firebase-adminsdk.json')
+
+# Use default storage to skip missing files errors
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+
+FIREBASE_CONFIG = {
+    'apiKey': config('FIREBASE_API_KEY'),
+    'authDomain': config('FIREBASE_AUTH_DOMAIN'),
+    'databaseURL': config('FIREBASE_DATABASE_URL'),
+    'projectId': config('FIREBASE_PROJECT_ID'),
+    'storageBucket': config('FIREBASE_STORAGE_BUCKET'), 
+    'messagingSenderId': config('FIREBASE_MESSAGING_SENDER_ID'),
+    'appId': config('FIREBASE_APP_ID'),
+    'measurementId': config('FIREBASE_MEASUREMENT_ID')
+}
+

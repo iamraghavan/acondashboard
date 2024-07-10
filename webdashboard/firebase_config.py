@@ -1,4 +1,5 @@
 import pyrebase
+import io
 
 firebase_config = {
   'apiKey': "AIzaSyCgoz33SSJnA1Qu2Ah3FOYJbe6-48wkwzo",
