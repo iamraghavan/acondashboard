@@ -12,7 +12,7 @@ from .firebase_service import upload_image, delete_image
 from uuid import uuid4
 from datetime import datetime
 
-import firebase_admin
+# import firebase_admin
 from firebase_admin import credentials, storage
 from django.http import JsonResponse
 
