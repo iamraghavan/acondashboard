@@ -27,9 +27,7 @@ flask-mysql-connector==1.1.0
 Flask-MySQLdb==2.0.0
 Flask-SQLAlchemy==3.1.1
 fonttools==4.53.0
-<<<<<<< HEAD
-gcloud==0.18.3
-=======
+
 
 pyrebase>=3.0.27
 python-decouple==3.8
@@ -39,7 +37,6 @@ gcloud>=0.17.0
 oauth2client>=2.0.1,<4.0.0
 
 
->>>>>>> e531604ae259ceef33893ed282576875f0044f83
 google-api-core==2.19.1
 google-api-python-client==2.136.0
 google-auth==2.31.0
@@ -92,11 +89,10 @@ PyMySQL==1.1.1
 pyparsing==3.1.2
 pyperclip==1.8.2
 pyphen==0.15.0
-<<<<<<< HEAD
+
 Pyrebase==3.0.27
 Pyrebase4==4.8.0
-=======
->>>>>>> e531604ae259ceef33893ed282576875f0044f83
+
 PyRect==0.2.0
 PyScreeze==0.1.30
 PySocks==1.7.1
