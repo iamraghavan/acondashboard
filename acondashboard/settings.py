@@ -139,8 +139,7 @@ PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/serviceworker.js')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Path to your Firebase admin SDK JSON file
-FIREBASE_ADMIN_SDK_PATH = os.path.join(BASE_DIR, 'static', 'andavarcon-firebase-adminsdk.json')
+
 
 FIREBASE_CONFIG = {
     'apiKey': 'AIzaSyCgoz33SSJnA1Qu2Ah3FOYJbe6-48wkwzo',
