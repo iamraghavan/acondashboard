@@ -27,11 +27,14 @@ flask-mysql-connector==1.1.0
 Flask-MySQLdb==2.0.0
 Flask-SQLAlchemy==3.1.1
 fonttools==4.53.0
-gcloud>=0.17.0
+
 pyrebase>=3.0.27
 python-decouple==3.8
 pyrebase4==4.8.0
 oauth2client>=4.1.2
+
+gcloud>=0.18.3
+
 google-api-core==2.19.1
 google-api-python-client==2.136.0
 google-auth==2.31.0
