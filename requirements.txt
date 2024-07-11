@@ -29,7 +29,6 @@ Flask-SQLAlchemy==3.1.1
 fonttools==4.53.0
 gcloud>=0.17.0
 pyrebase>=3.0.27
-oauth2client>=2.0.1,<4.0.0
 python-decouple==3.8
 pyrebase4==4.8.0
 oauth2client>=4.1.2
