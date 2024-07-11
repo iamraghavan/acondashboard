@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,16 +68,30 @@ WSGI_APPLICATION = 'acondashboard.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='3306'),
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Database configuration
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'u427691722_jbl',           # Replace with your database name
+        'USER': 'u427691722_adminjbl',      # Replace with your database username
+        'PASSWORD': 'p!T4X5#9RjE2',         # Replace with your database password
+        'HOST': '195.179.239.102',          # Replace with your database host
+        'PORT': '3306',                     # Replace with your database port if different
     }
+}
+
+# Firebase configuration
+FIREBASE_CONFIG = {
+    'apiKey': 'AIzaSyCgoz33SSJnA1Qu2Ah3FOYJbe6-48wkwzo',
+    'authDomain': 'andavarcon.firebaseapp.com',
+    'databaseURL': 'https://andavarcon-default-rtdb.asia-southeast1.firebasedatabase.app',
+    'projectId': 'andavarcon',
+    'storageBucket': 'andavarcon.appspot.com',
+    'messagingSenderId': '345505940170',
+    'appId': '1:345505940170:web:5f4d99483f4b0ff9ca2a33',
+    'measurementId': 'G-S11Y6KNMT4'
 }
 
 # Password validation
@@ -139,14 +153,5 @@ FIREBASE_ADMIN_SDK_PATH = os.path.join(BASE_DIR, 'static', 'andavarcon-firebase-
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
-FIREBASE_CONFIG = {
-    'apiKey': config('FIREBASE_API_KEY'),
-    'authDomain': config('FIREBASE_AUTH_DOMAIN'),
-    'databaseURL': config('FIREBASE_DATABASE_URL'),
-    'projectId': config('FIREBASE_PROJECT_ID'),
-    'storageBucket': config('FIREBASE_STORAGE_BUCKET'), 
-    'messagingSenderId': config('FIREBASE_MESSAGING_SENDER_ID'),
-    'appId': config('FIREBASE_APP_ID'),
-    'measurementId': config('FIREBASE_MEASUREMENT_ID')
-}
+
 
