@@ -1,11 +1,27 @@
-# models.py
 from django.db import models
 
-class Folder(models.Model):
+class WebdashboardFolder(models.Model):
     name = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField()
 
-class Image(models.Model):
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/')
-    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        managed = False
+        db_table = 'webdashboard_folder'
+
+    def __str__(self):
+        return self.name
+
+class WebdashboardImage(models.Model):
+    name = models.CharField(max_length=100)
+    file = models.CharField(max_length=100)
+    firebase_url = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField()
+    folder = models.ForeignKey(WebdashboardFolder, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'webdashboard_image'
+    
+    def __str__(self):
+        return self.name

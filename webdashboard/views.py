@@ -2,12 +2,13 @@ import uuid
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, Http404, HttpResponseNotAllowed
-from .firebase_config import auth, db, storage
+from .firebase_config import auth, db, storage, firebase_config
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
-from .models import Folder, Image
-from .firebase_service import upload_image, delete_image
+from .models import WebdashboardFolder, WebdashboardImage
 
+from .firebase_service import upload_image, delete_image
+from django.utils.text import slugify
 
 from uuid import uuid4
 from datetime import datetime
@@ -291,49 +292,15 @@ def create_circular(request):
 
 # Gallery -> Views
 # -----------------
-def gallery(request, unique_id):
-    if not request.session.get('uid') or request.session.get('unique_id') != unique_id:
-        return redirect('login_page')
-
-    user_id_token = request.session.get('uid')
-
-    try:
-        # Fetch the folders
-        blobs = storage_client.list_blobs(prefix='folders/')
-        folders = set()
-        for blob in blobs:
-            parts = blob.name.split('/')
-            if len(parts) >= 3 and parts[0] == 'folders':
-                folder_id = parts[1]
-                folder_name = parts[2]
-                if parts[-1] == '':  # Ensure it's a folder by checking if it ends with a slash
-                    folders.add((folder_id, folder_name))
-                elif len(parts) == 3 and '.' not in parts[2]:  # If it's a file without extension, consider it as a folder
-                    folders.add((folder_id, folder_name))
-
-        folders_list = [{'id': folder_id, 'name': folder_name} for folder_id, folder_name in folders]
-
-        context = {
-            'title': 'Gallery - Andavar College of Nursing - Bumble Bees - Admin Dashboard',
-            'breadcrumbs_title': 'Gallery',
-            'email': request.session.get('email', 'Unknown'),
-            'folders': folders_list  # Add folders to the context
-        }
-
-        return render(request, 'pages/gallery.html', context)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 
-# def upload_image_view(request, folder_id):
-#     # Your upload image logic here
-#     return HttpResponse(f"Upload image for folder ID: {folder_id}")
+import io
 
-
+@require_GET
 def list_folders(request):
     try:
         folders = []
-        blobs = storage_client.list_blobs(prefix='folders/')
+        blobs = storage.list_files(prefix='folders/')
         
         for blob in blobs:
             print("Blob name:", blob.name)  # Debugging print statement
@@ -351,9 +318,8 @@ def list_folders(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-import io
-
 @csrf_exempt
+@require_POST
 def create_folder(request, unique_id):
     if request.method == 'POST':
         folder_name = request.POST.get('folderName')
@@ -361,22 +327,36 @@ def create_folder(request, unique_id):
             return JsonResponse({'error': 'Folder name is required'}, status=400)
 
         try:
-            # Format folder name
-            formatted_folder_name = folder_name.lower().replace(' ', '-')
-            
             # Save folder metadata in MySQL database
-            new_folder = Folder.objects.create(name=formatted_folder_name)
-
-            # Create folder in Firebase Storage by uploading an empty file
-            folder_path = 'folders/' + str(new_folder.id) + '/' + formatted_folder_name + '/'
-            empty_file_path = folder_path + 'empty.txt'
-            storage.child(empty_file_path).put(io.BytesIO(b''), 'text/plain')
+            new_folder = WebdashboardFolder.objects.create(
+                name=folder_name,
+                slug=slugify(folder_name),  # Automatically generate slug from name
+                created_at=datetime.now().isoformat()
+            )
 
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
     return HttpResponseNotAllowed(['POST'], 'Method not allowed.')
+
+
+
+
+def gallery(request, unique_id):
+    if not request.session.get('uid') or request.session.get('unique_id') != unique_id:
+        return redirect('login_page')
+
+    context = {
+        'title': 'Gallery - Andavar College of Nursing - Bumble Bees - Admin Dashboard',
+        'breadcrumbs_title': 'Gallery',
+        'email': request.session.get('email', 'Unknown'),
+        
+    }
+    return render(request, 'pages/gallery.html', context)
+  
+
+
 
 
 def delete_folder(request, folder_id):
