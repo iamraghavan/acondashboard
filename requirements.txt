@@ -30,6 +30,9 @@ fonttools==4.53.0
 gcloud>=0.17.0
 pyrebase>=3.0.27
 oauth2client>=2.0.1,<4.0.0
+python-decouple==3.8
+pyrebase4==4.8.0
+oauth2client>=4.1.2
 google-api-core==2.19.1
 google-api-python-client==2.136.0
 google-auth==2.31.0
@@ -81,12 +84,10 @@ PyMySQL==1.1.1
 pyparsing==3.1.2
 pyperclip==1.8.2
 pyphen==0.15.0
-Pyrebase4==4.8.0
 PyRect==0.2.0
 PyScreeze==0.1.30
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
-python-decouple==3.8
 python-dotenv==1.0.1
 python-jwt==2.0.1
 pytweening==1.2.0
