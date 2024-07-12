@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    {% include 'components/header_component.html' %}
+    {% block sidebar %}
+    {% include 'components/sidebar_component.html' %}
+    {% endblock %}
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+
+
+                {% include 'components/breadcrumbs_component.html' %}
+
+
+                
+
+                <div class="widget-content searchable-container list">
+                   
+                
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <h4 class="card-title mb-0">Gallery : {{ folder.name }}</h4>
+                            </div>
+
+                 
+
+                            <div class="table-responsive">
+                                <table id="foldersTable" class="table w-100 table-striped table-bordered display nowrap">
+                                    <thead class="header-item">
+                                      <tr>
+                                        <th>File Name</th>
+                                        <th>Folder Name</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for image in image_data %}
+                                      <tr>
+                                        <td>{{ image.name }}</td>
+                                        <td>{{image.file}}</td>
+                                        <td>
+                                            <a href="{% url 'delete_image' image_id=image.id unique_id=request.session.unique_id %}" class="btn btn-danger btn-sm">
+                                                <i class="ti ti-trash"></i> Delete
+                                              </a>
+                                        </td>
+                                      </tr>
+
+                                     
+
+
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+                                
+                               
+                                
+
+
+                               
+                                <input type="hidden" id="folder-id" value="{{ folder.id }}">
+
+                            
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Include Axios from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if messages %}
+<script>
+    $(document).ready(function() {
+        
+            var message = "{{ messages|join:', ' }}";
+            Swal.fire({
+                icon: 'success',
+                title: message,
+                timer: 5000,  // 5 seconds
+                showConfirmButton: false
+            });
+        
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -39,7 +39,7 @@
                                 <h4 class="card-title mb-0">Gallery</h4>
                             </div>
                             <div class="table-responsive">
-                                <table id="gallery-table foldersTable" class="table w-100 table-striped table-bordered display nowrap">
+                                <table id="foldersTable" class="table w-100 table-striped table-bordered display nowrap">
                                     <thead class="header-item">
                                         <tr>
                                             <th>Folder ID</th>
@@ -48,17 +48,35 @@
                                         </tr>
                                     </thead>
                                     <tbody id="foldersTableBody">
-                                        
+                                        {% for folder in folders %}
                                             <tr>
-                                               
+                                                <td>{{ folder.id }}</td>
+                                                <td>{{ folder.name }}</td>
+                                                <td>
+                                                    <!-- Ensure this input holds the actual folder ID -->
+<input type="hidden" id="folder-id" value="{{ folder.id }}">
+
+<a href="#" class="btn rounded-pill btn-outline-primary btn-sm" onclick="openUploadModal('{{ folder.id }}')">
+    <i class="ti ti-upload"></i> Upload Image
+</a>
+                                                    
+<a href="{% url 'folder_gallery' folder_id=folder.id unique_id=request.session.unique_id %}" target="_blank" class="btn rounded-pill btn-outline-success btn-sm">
+    
+    <i class="ti ti-eye"></i> View
+</a>
+                                                </td>
                                             </tr>
-                                      
+                                        {% empty %}
+                                            <tr><td colspan="3">No folders found</td></tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
+                                
 
 
                                
-                               
+                                <input type="hidden" id="folder-id" value="{{ folder.id }}">
+
                             
                                 
                             </div>
@@ -75,6 +93,42 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
+<div class="dark-header-modal modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for uploading image -->
+                <form id="imageUploadForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="folderName">Folder Name:</label>
+                        <input type="text" class="form-control" id="folderName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="imageFile">Choose Image:</label>
+                        <input type="file" name="imageFile" class="form-control" id="imageFile" accept=".webp" required>
+                        <small class="form-text text-muted">Only .webp files allowed, maximum size 2MB.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="photoName">Photo Name:</label>
+                        <input type="text" class="form-control" id="photoName" name="photo_name" required>
+                    </div>
+                    <input type="hidden" id="folderIdInput" name="folderId">
+
+                    <div id="error-alert" class="alert alert-danger" style="display: none;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="uploadImageButton">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -100,6 +154,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script>
     document.querySelector('#createFolderBtn').addEventListener('click', function () {
@@ -137,76 +193,57 @@
     });
 </script>
 
+
+
+
+<!-- Modal for uploading image -->
+
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js' integrity='sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==' crossorigin='anonymous'></script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    function openUploadModal(folder_id, folder_name) {
+        // Open the upload modal
+        $('#uploadModal').modal('show');
+
+        // Set the folder_id and folder_name in the input fields
+        document.getElementById('folderIdInput').value = folder_id;
+        document.getElementById('folderName').value = folder_name;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        const foldersTableBody = document.getElementById('foldersTableBody');
+        document.getElementById('uploadImageButton').addEventListener('click', function() {
+            var folderId = document.getElementById('folderIdInput').value;
+            var formData = new FormData(document.getElementById('imageUploadForm'));
+            formData.append('imageFile', document.getElementById('imageFile').files[0]);
 
-        // Function to open modal for uploading image
-        function openUploadModal(folderId) {
-            // Implement your modal opening logic here
-            // Example:
-            // $('#uploadModal').modal('show');
-            console.log(`Upload image for folder ID: ${folderId}`);
-        }
+            var url = '{% url "upload_modal" 0 %}'.replace('0', folderId);
 
-        // Fetch folders data from Django view
-        axios.get("{% url 'list_folders' %}")
-            .then(function(response) {
-                const folders = response.data.folders;
-
-                if (folders.length > 0) {
-                    let html = '';
-                    folders.forEach(function(folder) {
-                        const uploadUrl = `javascript:openUploadModal('${folder.id}')`;  // Open modal onclick
-                          // Assuming 'view_images' is correctly defined
-
-                        html += `<tr>
-                                    <td>${folder.id}</td>
-                                    <td>${folder.name}</td>
-                                    <td>
-                                        <a href="${uploadUrl}" class="btn rounded-pill btn-outline-primary btn-sm">
-                                            <i class="ti ti-upload"></i> Upload Image
-                                        </a>
-                                        <a href="#" target="_blank" class="btn rounded-pill btn-outline-success btn-sm">
-                                            <i class="ti ti-eye"></i> View
-                                        </a>
-                                    </td>
-                                </tr>`;
-                    });
-                    foldersTableBody.innerHTML = html;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+           .then(response => response.json())
+           .then(data => {
+                if (data.success) {
+                    $('#uploadModal').modal('hide');
+                    // Refresh the page or update the image list as needed
                 } else {
-                    foldersTableBody.innerHTML = `<tr><td colspan="3">No folders found</td></tr>`;
+                    document.getElementById('error-alert').textContent = data.error;
+                    document.getElementById('error-alert').style.display = 'block';
                 }
             })
-            .catch(function(error) {
-                console.error('Error fetching folders:', error);
-                foldersTableBody.innerHTML = `<tr><td colspan="3">Error fetching folders</td></tr>`;
+           .catch(error => {
+                document.getElementById('error-alert').textContent = 'Error uploading image: ';
+                document.getElementById('error-alert').style.display = 'block';
             });
+        });
     });
 </script>
-
-
-<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form for image upload -->
-                <!-- Implement your upload form here -->
-                <p>Upload form for selected folder will appear here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% endblock %}

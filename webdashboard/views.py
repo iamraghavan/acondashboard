@@ -6,6 +6,8 @@ from .firebase_config import auth, db, storage, firebase_config
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
 from .models import WebdashboardFolder, WebdashboardImage
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.http import require_http_methods
 
 from .firebase_service import upload_image, delete_image
 from django.utils.text import slugify
@@ -19,6 +21,9 @@ from django.http import JsonResponse
 
 from django.http import JsonResponse
 from .firebase_utils import storage_client
+
+import firebase_admin
+from firebase_admin import credentials, storage
 
 
 
@@ -294,29 +299,18 @@ def create_circular(request):
 # -----------------
 
 
-import io
 
 @require_GET
 def list_folders(request):
     try:
-        folders = []
-        blobs = storage.list_files(prefix='folders/')
-        
-        for blob in blobs:
-            print("Blob name:", blob.name)  # Debugging print statement
-            parts = blob.name.split('/')
-            if len(parts) >= 3 and parts[0] == 'folders':
-                folder_id = parts[1]  # Extract the folder ID
-                folder_name_parts = parts[2:]
-                if folder_name_parts[-1] == 'empty.txt':
-                    folder_name_parts.pop()  # Remove 'empty.txt' from parts
-                folder_name = '/'.join(folder_name_parts)  # Join the rest as the folder name
-                folders.append({'id': folder_id, 'name': folder_name})
+        folders = WebdashboardFolder.objects.all().values('id', 'name')
 
-        print("Folders:", folders)  # Debugging print statement
-        return JsonResponse({'folders': folders})
+        return JsonResponse({'folders': list(folders)})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+
 
 @csrf_exempt
 @require_POST
@@ -342,47 +336,119 @@ def create_folder(request, unique_id):
 
 
 
-
 def gallery(request, unique_id):
     if not request.session.get('uid') or request.session.get('unique_id') != unique_id:
         return redirect('login_page')
+    
+    folders = WebdashboardFolder.objects.all().values('id', 'name')
 
     context = {
         'title': 'Gallery - Andavar College of Nursing - Bumble Bees - Admin Dashboard',
         'breadcrumbs_title': 'Gallery',
         'email': request.session.get('email', 'Unknown'),
-        
+        'folders': list(folders)
     }
     return render(request, 'pages/gallery.html', context)
-  
+
+from firebase_admin import storage
 
 
+import pyrebase
+import io
+
+firebase_config = {
+  'apiKey': "AIzaSyCgoz33SSJnA1Qu2Ah3FOYJbe6-48wkwzo",
+    'authDomain': "andavarcon.firebaseapp.com",
+    'databaseURL': "https://andavarcon-default-rtdb.asia-southeast1.firebasedatabase.app",
+    'projectId': "andavarcon",
+    'storageBucket': "andavarcon.appspot.com",
+    'messagingSenderId': "345505940170",
+    'appId': "1:345505940170:web:5f4d99483f4b0ff9ca2a33",
+    'measurementId': "G-S11Y6KNMT4"
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+storage = firebase.storage()
+@csrf_exempt
+def upload_modal(request, folder_id):
+    if request.method == 'POST':
+        try:
+            # Validate uploaded file
+            image_file = request.FILES.get('imageFile')
+            if not image_file:
+                return JsonResponse({'error': 'No image file provided'}, status=400)
+            if not image_file.name.lower().endswith('.webp'):
+                return JsonResponse({'error': 'Only.webp files are allowed'}, status=400)
+            if image_file.size > 2 * 1024 * 1024:  # 2MB limit
+                return JsonResponse({'error': 'File size exceeds 2MB limit'}, status=400)
+
+            photo_name = request.POST.get('photo_name')
+            if not photo_name:
+                return JsonResponse({'error': 'Photo name is required'}, status=400)
+
+            folder = WebdashboardFolder.objects.get(id=folder_id)
+            folder_path = f'folders/{folder.slug}/'
+            image_path = folder_path + image_file.name
+
+            # Upload image to Firebase Storage
+            storage.child(image_path).put(image_file)
+            firebase_url = storage.child(image_path).get_url(None)  # Get the Firebase URL
+
+            # Store image details in MySQL database
+            image = WebdashboardImage(
+                name=photo_name,
+                file=image_path,
+                firebase_url=firebase_url,  # Store the Firebase URL
+                created_at=datetime.now(),
+                folder=folder
+            )
+            image.save()
+
+            # Return success response
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+from django.contrib import messages
+
+@require_http_methods(['GET'])
+def delete_image(request, image_id, unique_id):
+    if not request.session.get('uid') or request.session.get('unique_id')!= unique_id:
+        return redirect('login_page')
+    try:
+        # Delete from MySQL database
+        image = WebdashboardImage.objects.get(id=image_id)
+        firebase_url = image.firebase_url
+        image.delete()
+
+        # Display a success message
+        messages.success(request, 'Image deleted successfully!')
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    except Exception as e:
+        print(f"Error deleting image: {e}")
+        return HttpResponse('Error deleting image')
 
 
-def delete_folder(request, folder_id):
-    folder = get_object_or_404(Folder, id=folder_id)
-    folder.delete()
-    return redirect('gallery')
+def folder_gallery(request, folder_id, unique_id):
+    if not request.session.get('uid') or request.session.get('unique_id') != unique_id:
+        return redirect('login_page')
+    
+    folder = WebdashboardFolder.objects.get(id=folder_id)
+    image_data = WebdashboardImage.objects.filter(folder=folder)
 
-# def upload_image_view(request):
-#     folders = Folder.objects.all()
-#     if request.method == 'POST':
-#         file = request.FILES['image']
-#         folder_ids = request.POST.getlist('folders')
-#         image_url = upload_image(file, 'images')
-#         image = Image.objects.create(name=file.name, image_url=image_url)
-#         for folder_id in folder_ids:
-#             folder = get_object_or_404(Folder, id=folder_id)
-#             image.folder.add(folder)
-#         return redirect('gallery')
-#     return render(request, 'upload_image.html', {'folders': folders})
+    context = {
+        'title': folder.name + ' Gallery Page - Andavar College of Nursing - Bumble Bees - Admin Dashboard',
+        'breadcrumbs_title': folder.name + ' / ' + str(folder_id),
+        'email': request.session.get('email', 'Unknown'),
+        'image_data': image_data,
+        'folder': folder
+    }
 
-def delete_image_view(request, image_id):
-    image = get_object_or_404(Image, id=image_id)
-    delete_image(image.image_url)
-    image.delete()
-    return redirect('gallery')
-
+    return render(request, 'pages/folder_gallery.html', context)
 
 #--------------------------
 
