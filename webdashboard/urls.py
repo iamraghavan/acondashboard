@@ -9,6 +9,8 @@ urlpatterns = [
     path('events/create/<str:unique_id>/', views.create_event, name='create_event'),
     
     path('events/view/<str:event_id>/', views.view_event, name='view_event'),
+    path('api/events/get/', views.get_events_api, name='getEventsApi'),
+    path('api/circulars/get/', views.get_circulars_api, name='getCircularsApi'),
     path('api/events/delete-event/<str:event_id>/', views.delete_event, name='delete_event'),
     path('api/events/update-event/<str:event_id>/', views.update_event, name='update_event'),
 

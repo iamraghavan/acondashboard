@@ -175,6 +175,36 @@ def view_event(request, event_id):
     except Exception as e:
         raise Http404("Event does not exist")
     
+
+def get_events_api():
+
+    try:
+
+        get_Event_data = db.child('events').get().val()
+
+        if not get_Event_data:
+            raise Http404("No events found")
+        
+        return JsonResponse(get_Event_data)
+    
+    except Exception as e:
+        raise Http404("Sorry API Issue with Server / Database")
+    
+
+def get_circulars_api():
+
+    try:
+
+        get_Circulars_data = db.child('circulars').get().val()
+
+        if not get_Circulars_data:
+            raise Http404("No events found")
+        
+        return JsonResponse(get_Circulars_data)
+    
+    except Exception as e:
+        raise Http404("Sorry API Issue with Server / Database")    
+    
     
 def update_event(request, event_id):
     if request.method == 'POST':
