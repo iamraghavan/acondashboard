@@ -177,33 +177,22 @@ def view_event(request, event_id):
     
 
 def get_events_api():
-
     try:
-
         get_Event_data = db.child('events').get().val()
-
         if not get_Event_data:
             raise Http404("No events found")
-        
-        return JsonResponse(get_Event_data)
-    
+        return JsonResponse(json.dumps(get_Event_data), safe=False)
     except Exception as e:
         raise Http404("Sorry API Issue with Server / Database")
-    
 
 def get_circulars_api():
-
     try:
-
         get_Circulars_data = db.child('circulars').get().val()
-
         if not get_Circulars_data:
-            raise Http404("No events found")
-        
-        return JsonResponse(get_Circulars_data)
-    
+            raise Http404("No circulars found")
+        return JsonResponse(json.dumps(get_Circulars_data), safe=False)
     except Exception as e:
-        raise Http404("Sorry API Issue with Server / Database")    
+        raise Http404("Sorry API Issue with Server / Database")   
     
     
 def update_event(request, event_id):
