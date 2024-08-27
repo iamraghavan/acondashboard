@@ -334,24 +334,22 @@ def list_folders(request):
 @csrf_exempt
 @require_POST
 def create_folder(request, unique_id):
-    if request.method == 'POST':
-        folder_name = request.POST.get('folderName')
-        if not folder_name:
-            return JsonResponse({'error': 'Folder name is required'}, status=400)
+    folder_name = request.POST.get('folderName')
+    if not folder_name:
+        return JsonResponse({'error': 'Folder name is required'}, status=400)
 
-        try:
-            # Save folder metadata in MySQL database
-            new_folder = WebdashboardFolder.objects.create(
-                name=folder_name,
-                slug=slugify(folder_name),  # Automatically generate slug from name
-                created_at=datetime.now().isoformat()
-            )
+    try:
+        # Save folder metadata in MySQL database
+        new_folder = WebdashboardFolder.objects.create(
+            name=folder_name,
+            slug=slugify(folder_name),  # Automatically generate slug from name
+            created_at=datetime.now().isoformat()
+        )
 
-            return JsonResponse({'success': True})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
-    return HttpResponseNotAllowed(['POST'], 'Method not allowed.')
 
 
 

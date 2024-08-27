@@ -93,7 +93,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
-<div class="dark-header-modal modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -105,8 +105,8 @@
                 <form id="imageUploadForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="folderName">Folder Name:</label>
-                        <input type="text" class="form-control" id="folderName" readonly>
+                        <label for="uploadFolderName">Folder Name:</label>
+                        <input type="text" class="form-control" id="uploadFolderName" readonly>
                     </div>
                     <div class="form-group">
                         <label for="imageFile">Choose Image:</label>
@@ -137,18 +137,17 @@
                 <h5 class="modal-title" id="createFolderModalLabel">Create New Folder</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-           
             <form id="createFolderForm">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="folderName" class="form-label">Folder Name</label>
-                        <input type="text" class="form-control" id="folderName" name="folderName" required>
+                        <label for="createFolderName" class="form-label">Folder Name</label>
+                        <input type="text" class="form-control" id="createFolderName" name="folderName" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createFolderBtn">Create</button>
+                    <button type="submit" class="btn btn-primary" id="createFolderBtn">Create</button>
                 </div>
             </form>
         </div>
@@ -157,41 +156,11 @@
 
 
 
-<script>
-    document.querySelector('#createFolderBtn').addEventListener('click', function () {
-        var folderName = document.querySelector('#folderName').value.trim(); // Trim whitespace
-        if (!folderName) {
-            alert('Folder name is required');
-            return;
-        }
+</div>
 
-        var url = '{% url "create_folder" unique_id="0" %}'.replace('0', '{{ request.session.unique_id }}');
 
-        var formData = new FormData();
-        formData.append('folderName', folderName);
 
-        fetch(url, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Folder created successfully!');
-                $('#createFolderModal').modal('hide');
-            } else {
-                alert('Failed to create folder: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error creating folder.');
-        });
-    });
-</script>
+
 
 
 
@@ -200,50 +169,109 @@
 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js' integrity='sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==' crossorigin='anonymous'></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
-    function openUploadModal(folder_id, folder_name) {
-        // Open the upload modal
-        $('#uploadModal').modal('show');
-
-        // Set the folder_id and folder_name in the input fields
-        document.getElementById('folderIdInput').value = folder_id;
-        document.getElementById('folderName').value = folder_name;
+// Get the CSRF token from the cookie
+function getCsrfToken() {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
     }
+    return cookieValue;
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('uploadImageButton').addEventListener('click', function() {
-            var folderId = document.getElementById('folderIdInput').value;
-            var formData = new FormData(document.getElementById('imageUploadForm'));
-            formData.append('imageFile', document.getElementById('imageFile').files[0]);
+// Upload image function
+function uploadImage(folderId, folderName) {
+    $('#uploadModal').modal('show');
+    document.getElementById('uploadFolderName').value = folderName;
+    document.getElementById('folderIdInput').value = folderId;
+}
 
-            var url = '{% url "upload_modal" 0 %}'.replace('0', folderId);
+// Create folder function
+function createFolder() {
+    var folderNameInput = document.getElementById('createFolderName');
+    var folderName = folderNameInput.value.trim();
+    var url = '{% url "create_folder" unique_id="0" %}'.replace('0', '{{ request.session.unique_id }}');
+    var formData = new FormData();
+    formData.append('folderName', folderName);
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: formData
-            })
-           .then(response => response.json())
-           .then(data => {
-                if (data.success) {
-                    $('#uploadModal').modal('hide');
-                    // Refresh the page or update the image list as needed
-                } else {
-                    document.getElementById('error-alert').textContent = data.error;
-                    document.getElementById('error-alert').style.display = 'block';
-                }
-            })
-           .catch(error => {
-                document.getElementById('error-alert').textContent = 'Error uploading image: ';
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Folder created successfully!');
+            $('#createFolderModal').modal('hide');
+            // Optionally, refresh or update the folder list here
+        } else {
+            alert('Failed to create folder: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating folder.');
+    });
+}
+
+// Upload image button click event
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('uploadImageButton').addEventListener('click', function() {
+        var folderId = document.getElementById('folderIdInput').value;
+        var formData = new FormData(document.getElementById('imageUploadForm'));
+        formData.append('imageFile', document.getElementById('imageFile').files[0]);
+
+        var url = '{% url "upload_modal" 0 %}'.replace('0', folderId);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                $('#uploadModal').modal('hide');
+                // Refresh the page or update the image list as needed
+            } else {
+                document.getElementById('error-alert').textContent = data.error;
                 document.getElementById('error-alert').style.display = 'block';
-            });
+            }
+        })
+        .catch(error => {
+            document.getElementById('error-alert').textContent = 'Error uploading image: ';
+            document.getElementById('error-alert').style.display = 'block';
         });
     });
+});
+
+// Create folder form submit event
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('createFolderForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        createFolder();
+    });
+});
+
+function openUploadModal(folderId, folderName) {
+    $('#uploadModal').modal('show');
+    document.getElementById('uploadFolderName').value = folderName;
+    document.getElementById('folderIdInput').value = folderId;
+}
 </script>
 
-{% endblock %}
+{% endblock %}  
