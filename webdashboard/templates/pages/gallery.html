@@ -64,6 +64,13 @@
     
     <i class="ti ti-eye"></i> View
 </a>
+
+<form id="delete-form" action="{% url 'delete_folder' folder.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn rounded-pill btn-outline-danger btn-sm">
+        <i class="ti ti-trash"></i> Delete
+    </button>
+</form>
                                                 </td>
                                             </tr>
                                         {% empty %}
@@ -272,6 +279,46 @@ function openUploadModal(folderId, folderName) {
     document.getElementById('uploadFolderName').value = folderName;
     document.getElementById('folderIdInput').value = folderId;
 }
+</script>
+
+<script>
+    $('#delete-form').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = window.location.href; // redirect to the same page
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to delete folder.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to delete folder.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
 </script>
 
 {% endblock %}  

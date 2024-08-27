@@ -481,3 +481,13 @@ def sign_out(request):
 def debug_view(request):
     print(request.session.get('unique_id'))
     return HttpResponse("Check console for session data.")
+
+def delete_folder(request, folder_id):
+    folder = WebdashboardFolder.objects.get(id=folder_id)
+    images = WebdashboardImage.objects.filter(folder=folder)
+
+    if request.method == 'POST':
+        folder.delete()
+        images.delete()
+        return JsonResponse({'success': True, 'message': 'Folder deleted successfully.'})
+    return HttpResponse("ERROR")  # or return an error message

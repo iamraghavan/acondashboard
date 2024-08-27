@@ -29,6 +29,10 @@ urlpatterns = [
     path('upload/<int:folder_id>/', views.upload_modal, name='upload_modal'),
     path('folder/<int:folder_id>/gallery/<str:unique_id>/', views.folder_gallery, name='folder_gallery'),
 
+    path('folder/<int:folder_id>/delete/', views.delete_folder, name='delete_folder'),
+    path('folder/<int:folder_id>/gallery/', views.folder_gallery, name='folder_gallery'),
+    path('folder/<int:folder_id>/gallery/<str:unique_id>/', views.folder_gallery, name='folder_gallery_with_unique_id'),
+
     path('gallery/d/kuppai-thotti/delete-image/<str:unique_id>/kuppa-thottila-podu/<int:image_id>/', views.delete_image, name='delete_image'),
 
 
