@@ -81,10 +81,10 @@ WSGI_APPLICATION = 'acondashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'u427691722_jbl',
-        'USER': 'u427691722_adminjbl',
-        'PASSWORD': 'p!T4X5#9RjE2',
-        'HOST': '195.179.239.102',
+        'NAME': 'u752561338_acon',
+        'USER': 'u752561338_raghavanoffici',
+        'PASSWORD': '232003@Anbu',
+        'HOST': '193.203.184.160',
         'PORT': '3306',
     }
 }
