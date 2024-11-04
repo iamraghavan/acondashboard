@@ -42,10 +42,11 @@
                                         <td>{{ image.name }}</td>
                                         <td>{{image.file}}</td>
                                         <td>
-                                            <a href="{% url 'delete_image' image_id=image.id unique_id=request.session.unique_id %}" class="btn btn-danger btn-sm">
+                                            <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmDelete('{{ image.id }}', '{% url 'delete_image' image_id=image.id unique_id=request.session.unique_id %}');">
                                                 <i class="ti ti-trash"></i> Delete
-                                              </a>
+                                            </a>
                                         </td>
+                                        
                                       </tr>
 
                                      
@@ -76,6 +77,25 @@
 </div>
 <!-- Include Axios from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(image_id, deleteUrl) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl; // Redirect to the delete URL
+            }
+        });
+    }
+</script>
+
+
 {% if messages %}
 <script>
     $(document).ready(function() {
@@ -89,6 +109,8 @@
             });
         
     });
+
+
 </script>
 {% endif %}
 {% endblock %}

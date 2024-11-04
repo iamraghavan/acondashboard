@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3x_tk9%b)wo6i&+_+msf-7%1&zzgp#ufptn7**k$@fc)4stm*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.5', 'acondashboard.onrender.com', '127.0.0.1','localhost']
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True

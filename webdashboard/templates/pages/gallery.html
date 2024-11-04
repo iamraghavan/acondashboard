@@ -178,147 +178,115 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js' integrity='sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==' crossorigin='anonymous'></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert -->
 <script>
-// Get the CSRF token from the cookie
-function getCsrfToken() {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            if (cookie.substring(0, 10) === 'csrftoken=') {
-                cookieValue = decodeURIComponent(cookie.substring(10));
-                break;
-            }
+    // Functions for handling CSRF token
+    function getCsrfToken() {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') return decodeURIComponent(value);
         }
+        return null;
     }
-    return cookieValue;
-}
 
-// Upload image function
-function uploadImage(folderId, folderName) {
-    $('#uploadModal').modal('show');
-    document.getElementById('uploadFolderName').value = folderName;
-    document.getElementById('folderIdInput').value = folderId;
-}
+    // Show SweetAlert notification
+    function showAlert(title, text, icon, reload = false) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            timer: 3000, // Close after 3 seconds
+            timerProgressBar: true,
+            didClose: () => {
+                if (reload) {
+                    location.reload();
+                }
+            }
+        });
+    }
 
-// Create folder function
-function createFolder() {
-    var folderNameInput = document.getElementById('createFolderName');
-    var folderName = folderNameInput.value.trim();
-    var url = '{% url "create_folder" unique_id="0" %}'.replace('0', '{{ request.session.unique_id }}');
-    var formData = new FormData();
-    formData.append('folderName', folderName);
+    // Function to open the upload modal
+    function openUploadModal(folderId, folderName) {
+        $('#uploadModal').modal('show');
+        document.getElementById('uploadFolderName').value = folderName;
+        document.getElementById('folderIdInput').value = folderId;
+    }
 
-    fetch(url, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': getCsrfToken()
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Folder created successfully!');
-            $('#createFolderModal').modal('hide');
-            // Optionally, refresh or update the folder list here
-        } else {
-            alert('Failed to create folder: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error creating folder.');
-    });
-}
+    // Create folder function
+    function createFolder() {
+        const folderName = document.getElementById('createFolderName').value.trim();
+        const url = '{% url "create_folder" unique_id="0" %}'.replace('0', '{{ request.session.unique_id }}');
 
-// Upload image button click event
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('uploadImageButton').addEventListener('click', function() {
-        var folderId = document.getElementById('folderIdInput').value;
-        var formData = new FormData(document.getElementById('imageUploadForm'));
-        formData.append('imageFile', document.getElementById('imageFile').files[0]);
-
-        var url = '{% url "upload_modal" 0 %}'.replace('0', folderId);
+        const formData = new FormData();
+        formData.append('folderName', folderName);
 
         fetch(url, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            },
+            body: formData,
+            headers: { 'X-CSRFToken': getCsrfToken() }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Success!', 'Folder created successfully!', 'success', true);
+                $('#createFolderModal').modal('hide');
+            } else {
+                showAlert('Error!', data.error || 'Failed to create folder.', 'error');
+            }
+        })
+        .catch(error => showAlert('Error!', 'Error creating folder: ' + error.message, 'error'));
+    }
+
+    // Upload image function
+    function uploadImage() {
+        const folderId = document.getElementById('folderIdInput').value;
+        const formData = new FormData(document.getElementById('imageUploadForm'));
+        const url = '{% url "upload_modal" 0 %}'.replace('0', folderId);
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrfToken() },
             body: formData
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 $('#uploadModal').modal('hide');
-                // Refresh the page or update the image list as needed
+                showAlert('Success!', 'Image uploaded successfully!', 'success', true);
             } else {
-                document.getElementById('error-alert').textContent = data.error;
-                document.getElementById('error-alert').style.display = 'block';
+                showAlert('Error!', data.error || 'Upload failed.', 'error');
             }
         })
-        .catch(error => {
-            document.getElementById('error-alert').textContent = 'Error uploading image: ';
-            document.getElementById('error-alert').style.display = 'block';
-        });
-    });
-});
+        .catch(error => showAlert('Error!', 'Error uploading image: ' + error.message, 'error'));
+    }
 
-// Create folder form submit event
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('createFolderForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        createFolder();
-    });
-});
-
-function openUploadModal(folderId, folderName) {
-    $('#uploadModal').modal('show');
-    document.getElementById('uploadFolderName').value = folderName;
-    document.getElementById('folderIdInput').value = folderId;
-}
-</script>
-
-<script>
-    $('#delete-form').submit(function(event) {
-        event.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            success: function(data) {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = window.location.href; // redirect to the same page
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to delete folder.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to delete folder.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+    // Confirm delete function
+    function confirmDelete(folderId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This folder will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + folderId).submit();
+                showAlert('Deleted!', 'Folder has been deleted.', 'success', true);
             }
         });
+    }
+
+    // Event listeners for DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('uploadImageButton').addEventListener('click', uploadImage);
+        document.getElementById('createFolderForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            createFolder();
+        });
     });
 </script>
+
 
 {% endblock %}  

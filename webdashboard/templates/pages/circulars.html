@@ -180,55 +180,76 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     let csrfToken = '{{ csrf_token }}';
 
+    function showAlert(title, text, icon) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            confirmButtonText: 'OK'
+        });
+    }
+
     function deleteCircular(id) {
         const url = '{% url "delete_circular" id=0 %}'.replace('0', id);
-        axios.delete(url, { headers: { 'X-CSRFToken': csrfToken } })
-           .then(response => {
-                if (response.data.success) {
-                    document.getElementById('circular-row-' + id).remove();
-                    alert('Circular deleted successfully.');
-                } else {
-                    alert('Failed to delete circular.');
-                }
-            })
-           .catch(error => {
-                alert('An error occurred while deleting the circular.');
-            });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(url, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        if (response.data.success) {
+                            document.getElementById('circular-row-' + id).remove();
+                            showAlert('Deleted!', 'Circular deleted successfully.', 'success');
+                        } else {
+                            showAlert('Failed!', 'Failed to delete circular.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showAlert('Error!', 'An error occurred while deleting the circular.', 'error');
+                    });
+            }
+        });
     }
 
     function openEditModal(id) {
         const url = '{% url "get_circular" id=0 %}'.replace('0', id);
         axios.get(url, { headers: { 'X-CSRFToken': csrfToken } })
-           .then(response => {
+            .then(response => {
                 const circular = response.data.circular;
-                document.getElementById('circular-id').value = circular.circular_id;
-                document.getElementById('circular-title').value = circular.title;
-                document.getElementById('circular-description').value = circular.description;
-                document.getElementById('circular-date').value = circular.date;
-                document.getElementById('circular-location').value = circular.location;
-                document.getElementById('circular-authorized-person').value = circular.authorized_person;
+                populateEditForm(circular);
                 $('#editCircularModal').modal('show');
-
-                let circularID = circular.circular_id;
-                document.getElementById('save-changes-btn2').onclick = function() {
-                    updateCircular(circularID);
-                };
             })
-           .catch(error => {
-                alert('An error occurred while fetching circular details.');
+            .catch(error => {
+                showAlert('Error!', 'An error occurred while fetching circular details.', 'error');
             });
+    }
+
+    function populateEditForm(circular) {
+        document.getElementById('circular-id').value = circular.circular_id;
+        document.getElementById('circular-title').value = circular.title;
+        document.getElementById('circular-description').value = circular.description;
+        document.getElementById('circular-date').value = circular.date;
+        document.getElementById('circular-location').value = circular.location;
+        document.getElementById('circular-authorized-person').value = circular.authorized_person;
+
+        let circularID = circular.circular_id;
+        document.getElementById('save-changes-btn2').onclick = function() {
+            updateCircular(circularID);
+        };
     }
 
     function updateCircular(circularId) {
         const url = '{% url "edit_circular" id=0 %}'.replace('0', circularId);
         const formData = new FormData(document.getElementById('editCircularForm'));
-        
-        console.log('Update circular request data:', formData);
         
         axios.post(url, formData, {
             headers: {
@@ -236,58 +257,51 @@
                 'Content-Type': 'multipart/form-data'
             }
         })
-           .then(response => {
-                if (response.data.success) {
-                    alert('Circular updated successfully!');
-                    $('#editCircularModal').modal('hide');
-                } else {
-                    alert(`Error updating circular: ${response.data.error}`);
-                }
-            })
-           .catch(error => {
-                console.error('Error updating circular:', error);
-                alert('An error occurred while updating circular.');
-            });
+        .then(response => {
+            if (response.data.success) {
+                showAlert('Updated!', 'Circular updated successfully!', 'success');
+                $('#editCircularModal').modal('hide');
+            } else {
+                showAlert('Error!', `Error updating circular: ${response.data.error}`, 'error');
+            }
+        })
+        .catch(error => {
+            showAlert('Error!', 'An error occurred while updating circular.', 'error');
+        });
     }
 
-
-
     function saveCircular() {
-    const formData = new FormData(document.getElementById('addEditCircularForm'));
-    const csrfToken = '{{ csrf_token }}';  
+        const formData = new FormData(document.getElementById('addEditCircularForm'));
 
-    axios.post('{% url "add_circular" %}', formData, {
-        headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    .then(response => {
-        if (response.data.success) {
-            location.reload();
-        } else {
-            alert('Failed to add circular: ' + response.data.error);
-        }
-    })
-    .catch(error => {
-        alert('An error occurred while adding the circular: ' + error.message);
-    });
-}
-
+        axios.post('{% url "add_circular" %}', formData, {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            if (response.data.success) {
+                showAlert('Added!', 'Circular added successfully!', 'success');
+                location.reload();
+            } else {
+                showAlert('Error!', 'Failed to add circular: ' + response.data.error, 'error');
+            }
+        })
+        .catch(error => {
+            showAlert('Error!', 'An error occurred while adding the circular: ' + error.message, 'error');
+        });
+    }
 
     document.getElementById('circular-search').addEventListener('input', function() {
-        var searchQuery = this.value.toLowerCase();
-        var rows = document.querySelectorAll('#circular-table tbody tr');
-        rows.forEach(function(row) {
-            var title = row.querySelector('td.wrap-text').innerText.toLowerCase();
-            if (title.includes(searchQuery)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+        const searchQuery = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#circular-table tbody tr');
+        rows.forEach(row => {
+            const title = row.querySelector('td.wrap-text').innerText.toLowerCase();
+            row.style.display = title.includes(searchQuery) ? '' : 'none';
         });
     });
 </script>
+
 
 
 <style>

@@ -35,7 +35,8 @@ urlpatterns = [
 
     path('gallery/d/kuppai-thotti/delete-image/<str:unique_id>/kuppa-thottila-podu/<int:image_id>/', views.delete_image, name='delete_image'),
 
-
+    path('api/events/get/', views.get_events_api, name='getEventsApi'),
+    path('api/circulars/get/', views.get_circulars_api, name='getCircularsApi'),
 
     path('signout/', views.sign_out, name='sign_out'),
     path('debug/', views.debug_view, name='debug_view'),
